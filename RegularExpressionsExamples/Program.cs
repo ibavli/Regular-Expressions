@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -121,6 +123,60 @@ namespace RegularExpressionsExamples
             Regex regex4 = new Regex("^\\d*$");
             if (!regex4.Match(IsJustNumber).Success)
                 Console.WriteLine("Yalnızca rakam girebilirsiniz");
+
+
+            /*
+             MATCHES Metodu : Match metodunda olduğu gibi bir metni başka bir metin içerisinde aramak amacı ile kullanılır. Ancak bulunan tek bir sonucu değil tüm sonuçları içerir.
+             */
+            WebResponse resp = null;
+            try
+            {
+                WebRequest WebReq = WebRequest.Create("https://www.turkish-media.com/tr/gazetecilere_yaz.htm");
+                resp = WebReq.GetResponse();
+                Console.WriteLine("Siteye bağlandı");
+                Stream str = resp.GetResponseStream();
+                StreamReader reader = new StreamReader(str);
+                string source = reader.ReadToEnd();
+
+                Regex mailPattern = new Regex("[\\w-]+(?:\\.[\\w-]+)*@(?:[\\w-]+\\.)+[a-zA-Z]{2,7}");
+                foreach (Match isim in mailPattern.Matches(source))
+                {
+                    Console.WriteLine(isim.Value);
+                }
+            }
+            catch
+            {
+                Console.WriteLine("Siteye bağlanamıyor");
+            }
+
+            Console.WriteLine("\n");
+
+            //Cümlenin içerisinde kaç tane olduğunu sayar
+            string searchText = "Bir berber, bir berbere gel beraber bir berber dükkanı açalım demiş";
+            Console.WriteLine(Regex.Matches(searchText, "berber", RegexOptions.Multiline).Count + " adet var.");
+
+            Console.WriteLine("\n");
+
+
+            /*
+             Replace Metodu : Bir metnin içerisinde geçen bir ya da birden fazla ifadeyi başka bir ifade ile değiştirmek amacı ile kullanılır.
+             */
+            string sentence = "Kaplumbağa bir hayvandır. Kaplumbağalar yuvalarını sırtlarında taşır. Kaplumbağalar çok yavaş hareket ederler.";
+            Regex regex5 = new Regex("Kaplumbağa");
+            Console.WriteLine(regex5.Replace(sentence, "Tosbağa"));
+
+
+            Console.WriteLine("\n");
+            /*
+             Split Metodu : Bir metni belirtilen bir tasarım kalıbına göre parçalara bölmek amacı ile kullanılır.
+             */
+            byte i;
+            string sentenceForSplit = "ali-veli-mehmet-hasan-hüseyin";
+            var array = Regex.Split(sentenceForSplit, "-");
+            foreach (var name in array)
+            {
+                Console.WriteLine(name);
+            }
             Console.Read();
 
         }
